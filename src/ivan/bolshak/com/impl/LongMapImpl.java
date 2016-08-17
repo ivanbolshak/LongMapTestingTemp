@@ -1,6 +1,5 @@
 package ivan.bolshak.com.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class LongMapImpl {
     private int sizeOfBasketsTable;
     private double loadBasket;
 //    private List<List<Entity>> baskets;
-    private List<Entity> [] baskets;
+    private List[] baskets;
 
     private final static int DEFAULT_SIZE_OF_BASKETS_TABLE = 16;
     private final static double DEFAULT_LOAD_BASKET = 0.75;
@@ -66,7 +65,7 @@ public class LongMapImpl {
     public String get(long key){
         int basketIndex = getBasketIndexByKey(key);
 
-        if (baskets[basketIndex]==null) {
+        if (null == baskets[basketIndex]) {
             return null;
         }
 
