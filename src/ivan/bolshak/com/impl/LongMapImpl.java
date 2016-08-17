@@ -69,9 +69,6 @@ public class LongMapImpl {
             return null;
         }
 
-
-
-
         List<Entity> entityList = baskets[basketIndex];
 //        System.out.println("getBasketIndexByKey in GET: "+(getBasketIndexByKey(key)));
 //        System.out.println("baskets size in GET: "+baskets.length);
@@ -84,15 +81,112 @@ public class LongMapImpl {
         return null;
     }
 
+    public void remove(long key){
+        int basketIndex = getBasketIndexByKey(key);
+
+        if (null == baskets[basketIndex]) {
+            return;
+        }
+        List<Entity> entityList = baskets[basketIndex];
+
+        for (Entity entityTemp: entityList){
+            if (key==entityTemp.getKey()){
+                entityList.remove(entityTemp);
+            }
+        }
+    }
+
+    public boolean isEmpty(){
+       for (int i=0; i<sizeOfBasketsTable; i++){
+           if (baskets[i]!=null)
+               return false;
+       }
+        return true;
+    }
+
+    public boolean containsKey(long key){
+        int basketIndex = getBasketIndexByKey(key);
+        if (null == baskets[basketIndex]) {
+            return false;
+        }
+        List<Entity> entityList = baskets[basketIndex];
+        for (Entity entityTemp: entityList){
+            if (key==entityTemp.getKey()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsValue(String value){
+       String [] values = values();
+        for (String str: values){
+            if (str.equals(value)){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
+    public long[] keys(){
+        int sizeArr = (int) size();
+        long []arr = new long[sizeArr];
+        int countPoint = 0;
+
+             for (int i=0; i<sizeOfBasketsTable; i++){
+                if (baskets[i]!=null){
+                    List<Entity> entityList = baskets[i];
+                    for (Entity entityTemp: entityList){
+                        arr[countPoint] = entityTemp.getKey();
+                        countPoint++;
+                    }
+                }
+            }
+
+        return arr;
+    }
+
+    public String[] values(){
+        List<String> longs = new LinkedList<>();
+
+        for (List<Entity> entities: baskets ){
+            if (entities!=null) {
+                for (Entity entity : entities) {
+                    longs.add(entity.getValue());
+                }
+            }
+        }
+
+        String [] result = longs.toArray(new String[longs.size()]);
+        return result;
+    }
+
+    public long size(){
+        long sizeCount = 0;
+        for (int i=0; i<sizeOfBasketsTable; i++){
+            if (baskets[i]!=null) {
+                sizeCount += (long)baskets[i].size();
+            }
+        }
+        return sizeCount;
+    }
+
+    public void clear(){
+        baskets = null;
+        baskets = new List[DEFAULT_SIZE_OF_BASKETS_TABLE];
+    }
+
+
+
+//    -----------private methods------------
 
 
     private int getBasketIndexByKey(long key){
 //        return  (hashCodeForKey(key)%sizeOfBasketsTable)-1;
-//        return  (int)(entityNew.getKey()%sizeOfBasketsTable)-1;
-      return (int)(key%sizeOfBasketsTable)-1;
+     return (int)(key%sizeOfBasketsTable)-1;
     }
+
     private int hashCodeForKey(long key) {
         return (int) (key ^ (key >>> 32));
     }
@@ -133,3 +227,16 @@ public class LongMapImpl {
 
 
 }
+
+//    public long[] keys(){
+//        List<Long> longs = new LinkedList<>();
+//
+//        for (List<Entity> entities: baskets ){
+//            for (Entity entity: entities){
+//                longs.add(entity.getKey());
+//            }
+//        }
+//
+//        long [] result = longs.toArray(new Long[longs.size()]);
+//        return result;
+//    }
