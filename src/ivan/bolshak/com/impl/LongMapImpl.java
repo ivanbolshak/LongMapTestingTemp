@@ -10,16 +10,15 @@ import java.util.List;
 public class LongMapImpl {
     private int sizeOfBasketsTable;
     private double loadBasket;
-    private List<List<Entity>> baskets;
+//    private List<List<Entity>> baskets;
+    private List<Entity> [] baskets;
 
     private final static int DEFAULT_SIZE_OF_BASKETS_TABLE = 16;
     private final static double DEFAULT_LOAD_BASKET = 0.75;
 //--------------constructors
     public LongMapImpl() {
         this(DEFAULT_SIZE_OF_BASKETS_TABLE);
-//        this.sizeOfBasketsTable = 16;
-//        this.loadBasket = 0.75;
-//        this.baskets = new ArrayList<>(16);
+
     }
 
     public LongMapImpl(int sizeOfBasketsTable){
@@ -29,7 +28,8 @@ public class LongMapImpl {
     public LongMapImpl(int sizeOfBasketsTable, double loadBasket ) {
         this.sizeOfBasketsTable = sizeOfBasketsTable;
         this.loadBasket = loadBasket;
-        this.baskets = new ArrayList<List<Entity>>(sizeOfBasketsTable);
+//        this.baskets = new ArrayList<List<Entity>>(sizeOfBasketsTable);
+        this.baskets = new List[sizeOfBasketsTable];
 
 
     }
@@ -37,28 +37,46 @@ public class LongMapImpl {
 
     public void put(long key, String value){
         Entity entityNew = new Entity(key, value);
-//        System.out.println("getBasketIndexByKey: "+getBasketIndexByKey(key));
-        System.out.println("baskets size: "+baskets.size());
-        List<Entity> entityList = baskets.get(getBasketIndexByKey(key)-1);
+//        System.out.println("getBasketIndexByKey: "+(getBasketIndexByKey(key)));
+//        System.out.println("baskets size: "+baskets.length);
 
-        if(entityList==null){
-            entityList = new LinkedList<>();
+
+        if(baskets[getBasketIndexByKey(key)]==null){
+            List<Entity> entityList = new LinkedList<>();
             entityList.add(entityNew);
+            baskets[getBasketIndexByKey(key)] = entityList;
+//            System.out.println("put1");
             return;
         }
+
+        List<Entity> entityList = baskets[getBasketIndexByKey(key)];
 
         for (Entity entityTemp: entityList){
             if (entityNew.getKey()==entityTemp.getKey()){
                 entityTemp.setValue(entityNew.getValue());
+//                System.out.println("put2");
                 return;
             }
         }
         entityList.add(entityNew);
+//        System.out.println("put3");
 
     }
 
     public String get(long key){
-        List<Entity> entityList = baskets.get(getBasketIndexByKey(key)-1);
+        int basketIndex = getBasketIndexByKey(key);
+
+        if (baskets[basketIndex]==null) {
+            return null;
+        }
+
+
+
+
+        List<Entity> entityList = baskets[basketIndex];
+//        System.out.println("getBasketIndexByKey in GET: "+(getBasketIndexByKey(key)));
+//        System.out.println("baskets size in GET: "+baskets.length);
+
         for (Entity entityTemp: entityList){
             if (key==entityTemp.getKey()){
                 return entityTemp.getValue();
@@ -72,9 +90,9 @@ public class LongMapImpl {
 
 
     private int getBasketIndexByKey(long key){
-        return  hashCodeForKey(key)%sizeOfBasketsTable;
-//        return  (int)entityNew.getKey()%sizeOfBasketsTable;
-//      return (int)key%sizeOfBasketsTable;
+//        return  (hashCodeForKey(key)%sizeOfBasketsTable)-1;
+//        return  (int)(entityNew.getKey()%sizeOfBasketsTable)-1;
+      return (int)(key%sizeOfBasketsTable)-1;
     }
     private int hashCodeForKey(long key) {
         return (int) (key ^ (key >>> 32));
