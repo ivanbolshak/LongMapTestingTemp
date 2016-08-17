@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Ivan on 15.08.2016.
  */
-public class LongMapImpl {
+public class LongMapImpl<V> {
     private int sizeOfBasketsTable;
     private double loadBasket;
     private List[] baskets;
@@ -36,7 +36,7 @@ public class LongMapImpl {
 
 //  -------------body
 
-    public void put(long key, String value){
+    public void put(long key, V value){
         Entity entityNew = new Entity(key, value);
 //        System.out.println("getBasketIndexByKey: "+(getBasketIndexByKey(key)));
 //        System.out.println("baskets size: "+baskets.length);
@@ -67,7 +67,7 @@ public class LongMapImpl {
 
     }
 
-    public String get(long key){
+    public V get(long key){
         int basketIndex = getBasketIndexByKey(key);
 
         if (null == baskets[basketIndex]) {
@@ -124,10 +124,10 @@ public class LongMapImpl {
         return false;
     }
 
-    public boolean containsValue(String value){
-       String [] values = values();
-        for (String str: values){
-            if (str.equals(value)){
+    public boolean containsValue(V value){
+       V [] values = values();
+        for (V str: values){
+            if (value.equals(str)){
                 return true;
             }
         }
@@ -153,19 +153,25 @@ public class LongMapImpl {
         return arr;
     }
 
-    public String[] values(){
-        List<String> longs = new LinkedList<>();
+    public V[] values(){
+        List<V> values = new LinkedList<>();
 
         for (List<Entity> entities: baskets ){
             if (entities!=null) {
                 for (Entity entity : entities) {
-                    longs.add(entity.getValue());
+                    values.add(entity.getValue());
                 }
             }
         }
 
-        String [] result = longs.toArray(new String[longs.size()]);
+        V [] result = (V[]) values.toArray();
+
+//        for (int i=0; i<result.length; i++){
+//            System.out.println("Value result index: "+i+" ; value: "+result[i]);
+//        }
+
         return result;
+
     }
 
 
@@ -187,7 +193,7 @@ public class LongMapImpl {
 
 //    -----------private methods------------
 
-    private void doublingBaskets(){
+    public void doublingBaskets(){
         List[] basketsOld = baskets;
         sizeOfBasketsTable = sizeOfBasketsTable*2;
         baskets = new List[sizeOfBasketsTable];
@@ -220,12 +226,12 @@ public class LongMapImpl {
 
     public class Entity {
         private long key;
-        private String value;
+        private V value;
 
         public Entity() {
         }
 
-        public Entity(long key, String value) {
+        public Entity(long key, V value) {
             this.key = key;
             this.value = value;
         }
@@ -238,11 +244,11 @@ public class LongMapImpl {
 //            this.key = key;
 //        }
 
-        public String getValue() {
+        public V getValue() {
             return value;
         }
 
-        public void setValue(String value) {
+        public void setValue(V value) {
             this.value = value;
         }
 
