@@ -66,10 +66,21 @@ public class app {
             System.out.println("String[] values(): "+str);
         }
 
-        longMap.clear();
-        System.out.println("Size after clear: "+longMap.size());
-        System.out.println("isEmpty after clear: "+longMap.isEmpty());
-        System.out.println("Get from map by index 1 after clear: "+longMap.get(1));
+//        longMap.clear();
+//        System.out.println("Size after clear: "+longMap.size());
+//        System.out.println("isEmpty after clear: "+longMap.isEmpty());
+//        System.out.println("Get from map by index 1 after clear: "+longMap.get(1));
+
+//        longMap.doublingBaskets();
+//        System.out.println("Size after doubling map: "+longMap.size());
+//
+//        System.out.println("Get from map by index 20: "+longMap.get(1));
+//        System.out.println("Get from map by index 2 : "+longMap.get(2));
+//        System.out.println("Get from map by index 3: "+longMap.get(3));
+//        System.out.println("Get from map by index 33: "+longMap.get(33));
+//        System.out.println("Get from map by index 44: "+longMap.get(44));
+//        System.out.println("Get from map by index str_1_again: "+longMap.get(1));
+
 
 
     }

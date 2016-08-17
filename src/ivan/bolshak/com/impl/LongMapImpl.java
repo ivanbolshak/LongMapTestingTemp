@@ -9,12 +9,13 @@ import java.util.List;
 public class LongMapImpl {
     private int sizeOfBasketsTable;
     private double loadBasket;
-//    private List<List<Entity>> baskets;
     private List[] baskets;
 
     private final static int DEFAULT_SIZE_OF_BASKETS_TABLE = 16;
     private final static double DEFAULT_LOAD_BASKET = 0.75;
-//--------------constructors
+
+//  --------------constructors
+
     public LongMapImpl() {
         this(DEFAULT_SIZE_OF_BASKETS_TABLE);
 
@@ -32,7 +33,8 @@ public class LongMapImpl {
 
 
     }
-//-------------body
+
+//  -------------body
 
     public void put(long key, String value){
         Entity entityNew = new Entity(key, value);
@@ -59,6 +61,9 @@ public class LongMapImpl {
         }
         entityList.add(entityNew);
 //        System.out.println("put3");
+        if (entityList.size()>(sizeOfBasketsTable*loadBasket)){
+            doublingBaskets();
+        }
 
     }
 
@@ -95,6 +100,7 @@ public class LongMapImpl {
             }
         }
     }
+
 
     public boolean isEmpty(){
        for (int i=0; i<sizeOfBasketsTable; i++){
@@ -162,6 +168,7 @@ public class LongMapImpl {
         return result;
     }
 
+
     public long size(){
         long sizeCount = 0;
         for (int i=0; i<sizeOfBasketsTable; i++){
@@ -173,14 +180,32 @@ public class LongMapImpl {
     }
 
     public void clear(){
-        baskets = null;
+//        baskets = null;
         baskets = new List[DEFAULT_SIZE_OF_BASKETS_TABLE];
     }
 
 
-
 //    -----------private methods------------
 
+    private void doublingBaskets(){
+        List[] basketsOld = baskets;
+        sizeOfBasketsTable = sizeOfBasketsTable*2;
+        baskets = new List[sizeOfBasketsTable];
+
+        for (List<Entity> entitiesOld: basketsOld ){
+            if (entitiesOld!=null) {
+                for (Entity entity : entitiesOld) {
+                    put(entity.getKey(), entity.getValue());
+
+                }
+            }
+        }
+
+        System.out.println("New Baskets length: "+baskets.length);
+
+        basketsOld = null;
+
+    }
 
     private int getBasketIndexByKey(long key){
 //        return  (hashCodeForKey(key)%sizeOfBasketsTable)-1;
@@ -191,8 +216,7 @@ public class LongMapImpl {
         return (int) (key ^ (key >>> 32));
     }
 
-
-    //    ---------------inner classes----------------
+//    ---------------inner classes----------------
 
     public class Entity {
         private long key;
