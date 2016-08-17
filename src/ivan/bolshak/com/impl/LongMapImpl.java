@@ -1,12 +1,15 @@
 package ivan.bolshak.com.impl;
 
+import ivan.bolshak.com.LongMap;
+
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Ivan on 15.08.2016.
  */
-public class LongMapImpl<V> {
+
+public class LongMapImpl<V> implements LongMap<V> {
     private int sizeOfBasketsTable;
     private double loadBasket;
     private List[] baskets;
@@ -36,7 +39,7 @@ public class LongMapImpl<V> {
 
 //  -------------body
 
-    public void put(long key, V value){
+    public V put(long key, V value){
         Entity entityNew = new Entity(key, value);
 //        System.out.println("getBasketIndexByKey: "+(getBasketIndexByKey(key)));
 //        System.out.println("baskets size: "+baskets.length);
@@ -47,7 +50,7 @@ public class LongMapImpl<V> {
             entityList.add(entityNew);
             baskets[getBasketIndexByKey(key)] = entityList;
 //            System.out.println("put1");
-            return;
+            return value;
         }
 
         List<Entity> entityList = baskets[getBasketIndexByKey(key)];
@@ -56,15 +59,17 @@ public class LongMapImpl<V> {
             if (entityNew.getKey()==entityTemp.getKey()){
                 entityTemp.setValue(entityNew.getValue());
 //                System.out.println("put2");
-                return;
+                return value;
             }
         }
+
         entityList.add(entityNew);
 //        System.out.println("put3");
         if (entityList.size()>(sizeOfBasketsTable*loadBasket)){
             doublingBaskets();
         }
 
+        return value;
     }
 
     public V get(long key){
@@ -86,19 +91,21 @@ public class LongMapImpl<V> {
         return null;
     }
 
-    public void remove(long key){
+    public V remove(long key){
         int basketIndex = getBasketIndexByKey(key);
 
         if (null == baskets[basketIndex]) {
-            return;
+            return null;
         }
         List<Entity> entityList = baskets[basketIndex];
 
         for (Entity entityTemp: entityList){
             if (key==entityTemp.getKey()){
                 entityList.remove(entityTemp);
+                return entityTemp.getValue();
             }
         }
+        return null;
     }
 
 
