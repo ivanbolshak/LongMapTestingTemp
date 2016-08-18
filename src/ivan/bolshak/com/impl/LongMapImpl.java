@@ -5,10 +5,6 @@ import ivan.bolshak.com.LongMap;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Ivan on 15.08.2016.
- */
-
 public class LongMapImpl<V> implements LongMap<V> {
     private int sizeOfBasketsTable;
     private double loadBasket;
@@ -17,11 +13,10 @@ public class LongMapImpl<V> implements LongMap<V> {
     private final static int DEFAULT_SIZE_OF_BASKETS_TABLE = 16;
     private final static double DEFAULT_LOAD_BASKET = 0.75;
 
-//  --------------constructors
+//  ----------constructors
 
     public LongMapImpl() {
         this(DEFAULT_SIZE_OF_BASKETS_TABLE);
-
     }
 
     public LongMapImpl(int sizeOfBasketsTable){
@@ -31,14 +26,12 @@ public class LongMapImpl<V> implements LongMap<V> {
     public LongMapImpl(int sizeOfBasketsTable, double loadBasket ) {
         this.sizeOfBasketsTable = sizeOfBasketsTable;
         this.loadBasket = loadBasket;
-//        this.baskets = new ArrayList<List<Entity>>(sizeOfBasketsTable);
         this.baskets = new List[sizeOfBasketsTable];
-
-
     }
 
 //  -------------body
 
+    @Override
     public V put(long key, V value){
         int basketIndex = getBasketIndexByKey(key);
         Entity entityNew = new Entity(key, value);
@@ -47,7 +40,6 @@ public class LongMapImpl<V> implements LongMap<V> {
             List<Entity> entityList = new LinkedList<>();
             entityList.add(entityNew);
             baskets[getBasketIndexByKey(key)] = entityList;
-//            System.out.println("put1");
             return value;
         }
 
@@ -56,13 +48,11 @@ public class LongMapImpl<V> implements LongMap<V> {
         for (Entity entityTemp: entityList){
             if (entityNew.getKey()==entityTemp.getKey()){
                 entityTemp.setValue(entityNew.getValue());
-//                System.out.println("put2");
                 return value;
             }
         }
 
         entityList.add(entityNew);
-//        System.out.println("put3");
         if (entityList.size()>(sizeOfBasketsTable*loadBasket)){
             doublingBaskets();
         }
@@ -70,6 +60,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return value;
     }
 
+    @Override
     public V get(long key){
         int basketIndex = getBasketIndexByKey(key);
 
@@ -78,8 +69,6 @@ public class LongMapImpl<V> implements LongMap<V> {
         }
 
         List<Entity> entityList = baskets[basketIndex];
-//        System.out.println("getBasketIndexByKey in GET: "+(getBasketIndexByKey(key)));
-//        System.out.println("baskets size in GET: "+baskets.length);
 
         for (Entity entityTemp: entityList){
             if (key==entityTemp.getKey()){
@@ -89,6 +78,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return null;
     }
 
+    @Override
     public V remove(long key){
         int basketIndex = getBasketIndexByKey(key);
 
@@ -106,7 +96,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return null;
     }
 
-
+    @Override
     public boolean isEmpty(){
        for (int i=0; i<sizeOfBasketsTable; i++){
            if (baskets[i]!=null)
@@ -115,6 +105,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return true;
     }
 
+    @Override
     public boolean containsKey(long key){
         int basketIndex = getBasketIndexByKey(key);
         if (null == baskets[basketIndex]) {
@@ -129,6 +120,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return false;
     }
 
+    @Override
     public boolean containsValue(V value){
        V [] values = values();
         for (V str: values){
@@ -139,7 +131,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return false;
     }
 
-
+    @Override
     public long[] keys(){
         int sizeArr = (int) size();
         long []arr = new long[sizeArr];
@@ -158,6 +150,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return arr;
     }
 
+//    @Override
 //    public V[] values(){
 //        int sizeArr = (int) size();
 //        V []arr = (V[]) new Object[sizeArr];
@@ -176,8 +169,7 @@ public class LongMapImpl<V> implements LongMap<V> {
 //        return arr;
 //    }
 
-
-
+    @Override
     public V[] values(){
         List<V> values = new LinkedList<>();
 
@@ -191,15 +183,10 @@ public class LongMapImpl<V> implements LongMap<V> {
 
         V [] result = (V[]) values.toArray();
 
-//        for (int i=0; i<result.length; i++){
-//            System.out.println("Value result index: "+i+" ; value: "+result[i]);
-//        }
-
         return result;
-
     }
 
-
+    @Override
     public long size(){
         long sizeCount = 0;
         for (int i=0; i<sizeOfBasketsTable; i++){
@@ -210,10 +197,10 @@ public class LongMapImpl<V> implements LongMap<V> {
         return sizeCount;
     }
 
+    @Override
     public void clear(){
         baskets = new List[DEFAULT_SIZE_OF_BASKETS_TABLE];
     }
-
 
 //    -----------private methods------------
 
@@ -232,7 +219,6 @@ public class LongMapImpl<V> implements LongMap<V> {
         }
 
         basketsOld = null;
-
     }
 
     private int getBasketIndexByKey(long key){
@@ -240,7 +226,7 @@ public class LongMapImpl<V> implements LongMap<V> {
      return (int)key%sizeOfBasketsTable;
     }
 
-    private int hashCodeForKey(long key) {
+    private int hashCodeForKey(long key) { /*used with previos method getBasketIndexByKey() if needed use hashCode*/
         return (int) (key ^ (key >>> 32));
     }
 
@@ -262,10 +248,6 @@ public class LongMapImpl<V> implements LongMap<V> {
             return key;
         }
 
-//        public void setKey(long key) {
-//            this.key = key;
-//        }
-
         public V getValue() {
             return value;
         }
@@ -276,19 +258,4 @@ public class LongMapImpl<V> implements LongMap<V> {
 
 
     }
-
-
 }
-
-//    public long[] keys(){
-//        List<Long> longs = new LinkedList<>();
-//
-//        for (List<Entity> entities: baskets ){
-//            for (Entity entity: entities){
-//                longs.add(entity.getKey());
-//            }
-//        }
-//
-//        long [] result = longs.toArray(new Long[longs.size()]);
-//        return result;
-//    }
