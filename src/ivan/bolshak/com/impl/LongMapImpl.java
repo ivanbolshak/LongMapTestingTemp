@@ -40,12 +40,10 @@ public class LongMapImpl<V> implements LongMap<V> {
 //  -------------body
 
     public V put(long key, V value){
+        int basketIndex = getBasketIndexByKey(key);
         Entity entityNew = new Entity(key, value);
-//        System.out.println("getBasketIndexByKey: "+(getBasketIndexByKey(key)));
-//        System.out.println("baskets size: "+baskets.length);
 
-
-        if(baskets[getBasketIndexByKey(key)]==null){
+        if(baskets[basketIndex]==null){
             List<Entity> entityList = new LinkedList<>();
             entityList.add(entityNew);
             baskets[getBasketIndexByKey(key)] = entityList;
@@ -53,7 +51,7 @@ public class LongMapImpl<V> implements LongMap<V> {
             return value;
         }
 
-        List<Entity> entityList = baskets[getBasketIndexByKey(key)];
+        List<Entity> entityList = baskets[basketIndex];
 
         for (Entity entityTemp: entityList){
             if (entityNew.getKey()==entityTemp.getKey()){
@@ -160,6 +158,26 @@ public class LongMapImpl<V> implements LongMap<V> {
         return arr;
     }
 
+//    public V[] values(){
+//        int sizeArr = (int) size();
+//        V []arr = (V[]) new Object[sizeArr];
+//        int countPoint = 0;
+//
+//        for (int i=0; i<sizeOfBasketsTable; i++){
+//            if (baskets[i]!=null){
+//                List<Entity> entityList = baskets[i];
+//                for (Entity entityTemp: entityList){
+//                    arr[countPoint] = entityTemp.getValue();
+//                    countPoint++;
+//                }
+//            }
+//        }
+//
+//        return arr;
+//    }
+
+
+
     public V[] values(){
         List<V> values = new LinkedList<>();
 
@@ -193,14 +211,13 @@ public class LongMapImpl<V> implements LongMap<V> {
     }
 
     public void clear(){
-//        baskets = null;
         baskets = new List[DEFAULT_SIZE_OF_BASKETS_TABLE];
     }
 
 
 //    -----------private methods------------
 
-    public void doublingBaskets(){
+    private void doublingBaskets(){
         List[] basketsOld = baskets;
         sizeOfBasketsTable = sizeOfBasketsTable*2;
         baskets = new List[sizeOfBasketsTable];
@@ -214,15 +231,13 @@ public class LongMapImpl<V> implements LongMap<V> {
             }
         }
 
-        System.out.println("New Baskets length: "+baskets.length);
-
         basketsOld = null;
 
     }
 
     private int getBasketIndexByKey(long key){
-//        return  (hashCodeForKey(key)%sizeOfBasketsTable)-1;
-     return (int)(key%sizeOfBasketsTable)-1;
+//        return  hashCodeForKey(key)%sizeOfBasketsTable;
+     return (int)key%sizeOfBasketsTable;
     }
 
     private int hashCodeForKey(long key) {
