@@ -13,7 +13,7 @@ public class LongMapImpl<V> implements LongMap<V> {
     private final static int DEFAULT_SIZE_OF_BASKETS_TABLE = 16;
     private final static double DEFAULT_LOAD_BASKET = 0.75;
 
-//  ----------constructors
+//  -----------constructors-----------
 
     public LongMapImpl() {
         this(DEFAULT_SIZE_OF_BASKETS_TABLE);
@@ -29,7 +29,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         this.baskets = new List[sizeOfBasketsTable];
     }
 
-//  -------------body
+//  -----------public methods-----------
 
     @Override
     public V put(long key, V value){
@@ -122,16 +122,23 @@ public class LongMapImpl<V> implements LongMap<V> {
 
     @Override
     public boolean containsValue(V value){
-       V [] values = values();
-        for (V str: values){
-            if (value.equals(str)){
-                return true;
+
+        for (int i=0; i<sizeOfBasketsTable;i++){
+            if (null!=baskets[i]){
+                List<Entity> entityList = baskets[i];
+                for (Entity entity: entityList){
+                    if (entity.getValue().equals(value)){
+                        return true;
+                    }
+                }
             }
         }
+
+
         return false;
     }
 
-    @Override
+   @Override
     public long[] keys(){
         int sizeArr = (int) size();
         long []arr = new long[sizeArr];
@@ -149,25 +156,6 @@ public class LongMapImpl<V> implements LongMap<V> {
 
         return arr;
     }
-
-//    @Override
-//    public V[] values(){
-//        int sizeArr = (int) size();
-//        V []arr = (V[]) new Object[sizeArr];
-//        int countPoint = 0;
-//
-//        for (int i=0; i<sizeOfBasketsTable; i++){
-//            if (baskets[i]!=null){
-//                List<Entity> entityList = baskets[i];
-//                for (Entity entityTemp: entityList){
-//                    arr[countPoint] = entityTemp.getValue();
-//                    countPoint++;
-//                }
-//            }
-//        }
-//
-//        return arr;
-//    }
 
     @Override
     public V[] values(){
